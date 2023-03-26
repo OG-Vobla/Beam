@@ -56,7 +56,7 @@ public class CardGameManager : MonoBehaviour
 	public List<CardMovement> playerDiscardPile;
 
 	public TextMeshProUGUI discardPileSizeText;
-
+	public bool canMove = false;
 
 	private void Start()
 	{
@@ -90,16 +90,16 @@ public class CardGameManager : MonoBehaviour
 		List<CardMovement> cards = new List<CardMovement>();	
 		if (cardPerk.forAllCards)
 		{
-			cards.Concat(enemyDiscardPile);
-			cards.Concat(playerDiscardPile);
+			cards.AddRange(enemyDiscardPile);
+			cards.AddRange(playerDiscardPile);
 		}
 		else if (cardPerk.forEnemyCards)
 		{
-			cards.Concat(enemyDiscardPile);
+			cards.AddRange(enemyDiscardPile);
 		}
 		else if (cardPerk.forAlliesCards)
 		{
-			cards.Concat(playerDiscardPile);
+			cards.AddRange(playerDiscardPile);
 		}
 		foreach (CardMovement discCardScript in cards)
 		{
