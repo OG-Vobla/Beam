@@ -425,6 +425,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1859a3db9b398e04c8ea2087206af6ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardPrefabs:
+  - {fileID: 1399138890494727563, guid: 870dcbccc554bc14587cd5a421e27f36, type: 3}
+  - {fileID: 1399138890494727563, guid: baf06b1b593cb8f4480bb8d14cc29515, type: 3}
+  - {fileID: 1399138890494727563, guid: d25069fae3e517744810433a0bd0cec1, type: 3}
+  - {fileID: 1399138890494727563, guid: da317a8f13f2095409df054211a55a24, type: 3}
+  - {fileID: 1399138890494727563, guid: 1a18ba4cd2970f14b8979be2adaedb70, type: 3}
+  - {fileID: 1399138890494727563, guid: 66bbb7da5ca97b643b599b3479ceddb8, type: 3}
+  - {fileID: 1399138890494727563, guid: bdad56b265ee1124082089e6827bf87d, type: 3}
+  - {fileID: 1399138890494727563, guid: 74ed97352c516934b8e80fe5c4af476f, type: 3}
+  - {fileID: 1399138890494727563, guid: 376827d0d5e249c4ca82a55a406db58a, type: 3}
+  - {fileID: 1399138890494727563, guid: 5e7fe446a8bf93949b6f0308fe3cc0de, type: 3}
+  enemyDeck: []
   playerDeck:
   - {fileID: 1400898793}
   - {fileID: 1154922980}
@@ -437,6 +449,7 @@ MonoBehaviour:
   enemyDiscardPile: []
   playerDiscardPile: []
   discardPileSizeText: {fileID: 1504709009}
+  canMove: 0
 --- !u!4 &301529597
 Transform:
   m_ObjectHideFlags: 0

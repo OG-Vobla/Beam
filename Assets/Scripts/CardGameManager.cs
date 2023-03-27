@@ -5,6 +5,8 @@ using TMPro;
 using System;
 using System.Runtime.CompilerServices;
 using System.Linq;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 
 [Serializable]
 public class Perk
@@ -45,7 +47,8 @@ public class Card
 
 public class CardGameManager : MonoBehaviour
 {
-
+	public List<GameObject> cardPrefabs;
+	public List<CardMovement> enemyDeck;
 	public List<CardMovement> playerDeck;
 	public TextMeshProUGUI deckSizeText;
 
@@ -56,75 +59,99 @@ public class CardGameManager : MonoBehaviour
 	public List<CardMovement> playerDiscardPile;
 
 	public TextMeshProUGUI discardPileSizeText;
-	public bool canMove = false;
+	public bool canMove = true;
 
 	private void Start()
 	{
+		GenerateEnemyDeck();
 	}
 
 	public void DrawCard()
 	{
-		if (playerDeck.Count >= 1)
+		if (canMove)
 		{
-			CardMovement randomCard = playerDeck[UnityEngine.Random.Range(0, playerDeck.Count)];
-			for (int i = 0; i < availableCardSlots.Length; i++)
+			if (playerDeck.Count >= 1)
 			{
-				if (availableCardSlots[i] == true)
+				CardMovement randomCard = playerDeck[UnityEngine.Random.Range(0, playerDeck.Count)];
+				for (int i = 0; i < availableCardSlots.Length; i++)
 				{
-					randomCard.gameObject.SetActive(true);
-					randomCard.handIndex = i;
-					randomCard.transform.position = cardSlots[i].position;
-					randomCard.hasBeenPlayed = false;
-					playerDeck.Remove(randomCard);
-					availableCardSlots[i] = false;
-					return;
+					if (availableCardSlots[i] == true)
+					{
+						randomCard.gameObject.SetActive(true);
+						randomCard.handIndex = i;
+						randomCard.transform.position = cardSlots[i].position;
+						randomCard.hasBeenPlayed = false;
+						playerDeck.Remove(randomCard);
+						availableCardSlots[i] = false;
+						canMove = false;
+						return;
+					}
 				}
 			}
 		}
+
 	}
 
-	public void PlayCard(CardMovement card)
+	public void GenerateEnemyDeck()
 	{
-		Perk cardPerk = card.selfCard.perk;
-		Card playerCard = card.selfCard;
-		List<CardMovement> cards = new List<CardMovement>();	
-		if (cardPerk.forAllCards)
+		List<GameObject> newDeck = cardPrefabs;
+		for (int i = 0; i< playerDeck.Count; i++)
 		{
-			cards.AddRange(enemyDiscardPile);
-			cards.AddRange(playerDiscardPile);
+			var newCard = Instantiate(newDeck[UnityEngine.Random.Range(0, newDeck.Count)], transform);
+			enemyDeck.Add(newCard.GetComponent<CardMovement>());
+			newCard.SetActive(false);
+			newDeck.Remove(newCard);
 		}
-		else if (cardPerk.forEnemyCards)
+	}
+	public void EnemyPlayCard()
+	{
+
+	}
+	public void PlayerPlayCard(CardMovement card)
+	{
+		if (canMove)
 		{
-			cards.AddRange(enemyDiscardPile);
-		}
-		else if (cardPerk.forAlliesCards)
-		{
-			cards.AddRange(playerDiscardPile);
-		}
-		foreach (CardMovement discCardScript in cards)
-		{
-			Card discCard = discCardScript.selfCard;
-			if (cardPerk.typeCards.Contains(discCard.type))
+			Perk cardPerk = card.selfCard.perk;
+			Card playerCard = card.selfCard;
+			List<CardMovement> cards = new List<CardMovement>();	
+			if (cardPerk.forAllCards)
 			{
-				if (cardPerk.isHeal)
+				cards.AddRange(enemyDiscardPile);
+				cards.AddRange(playerDiscardPile);
+			}
+			else if (cardPerk.forEnemyCards)
+			{
+				cards.AddRange(enemyDiscardPile);
+			}
+			else if (cardPerk.forAlliesCards)
+			{
+				cards.AddRange(playerDiscardPile);
+			}
+			foreach (CardMovement discCardScript in cards)
+			{
+				Card discCard = discCardScript.selfCard;
+				if (cardPerk.typeCards.Contains(discCard.type))
 				{
-					discCardScript.Heal(cardPerk.points);
-				}
-				else
-				{
-					discCardScript.TakeDamage(cardPerk.points);
+					if (cardPerk.isHeal)
+					{
+						discCardScript.Heal(cardPerk.points);
+					}
+					else
+					{
+						discCardScript.TakeDamage(cardPerk.points);
+					}
 				}
 			}
-		}
-		foreach (CardMovement enemyCard in enemyDiscardPile)
-		{
-			if ((enemyCard.selfCard.type == "Rook" && playerCard.type == "Paper") || (enemyCard.selfCard.type == "Cutter" && playerCard.type == "Rook") || (enemyCard.selfCard.type == "Paper" && playerCard.type == "Cutter"))
+			foreach (CardMovement enemyCard in enemyDiscardPile)
 			{
-				enemyCard.TakeDamage(playerCard.attackPoints);
+				if ((enemyCard.selfCard.type == "Rook" && playerCard.type == "Paper") || (enemyCard.selfCard.type == "Cutter" && playerCard.type == "Rook") || (enemyCard.selfCard.type == "Paper" && playerCard.type == "Cutter"))
+				{
+					enemyCard.TakeDamage(playerCard.attackPoints);
+				}
 			}
+			playerDiscardPile.Add(card);
+			canMove = false;
 		}
-		playerDiscardPile.Add(card);
-		availableCardSlots[card.handIndex] = true;
 	}
 
 	private void Update()

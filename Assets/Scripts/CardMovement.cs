@@ -43,7 +43,7 @@ public class CardMovement : MonoBehaviour
 			anim.SetTrigger("move");
 			transform.position += Vector3.up * 3f;
 			hasBeenPlayed = true;
-			gm.PlayCard(this);
+			gm.PlayerPlayCard(this);
 		}
 	}
 	public void Heal(int points)
