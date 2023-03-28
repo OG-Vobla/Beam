@@ -15,7 +15,9 @@ public class CardMovement : MonoBehaviour
 
 	private Animator anim;
 
-	public GameObject effect;
+	public GameObject healEffect;
+	public GameObject takeDamageEffect;
+	public GameObject dieEffect;
 	public GameObject hollowCircle;
 
 	public Card selfCard;
@@ -31,28 +33,30 @@ public class CardMovement : MonoBehaviour
 		healthText.text = selfCard.healthPoints.ToString();
 		if (selfCard.healthPoints <= 0)
 		{
-			Instantiate(effect, transform.position, Quaternion.identity);
+			Instantiate(dieEffect, transform.position, Quaternion.identity);
 			Destroy(gameObject);
 		}
 	}
 	private void OnMouseDown()
 	{
-		if (!hasBeenPlayed)
+		if (!hasBeenPlayed && gm.canMove)
 		{
 			Instantiate(hollowCircle, transform.position, Quaternion.identity);
 			anim.SetTrigger("move");
 			transform.position += Vector3.up * 3f;
 			hasBeenPlayed = true;
-			gm.PlayerPlayCard(this);
+			gm.PlayCard(this, false);
 		}
 	}
 	public void Heal(int points)
 	{
 		selfCard.healthPoints += points;
+		Instantiate(healEffect, transform.position, Quaternion.identity);
 	}
 	public void TakeDamage(int points)
 	{
 		selfCard.healthPoints -= points;
+		Instantiate(takeDamageEffect, transform.position, Quaternion.identity);
 	}
 	/*
 		void MoveToDiscardPile()

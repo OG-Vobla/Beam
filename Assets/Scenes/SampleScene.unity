@@ -449,7 +449,7 @@ MonoBehaviour:
   enemyDiscardPile: []
   playerDiscardPile: []
   discardPileSizeText: {fileID: 1504709009}
-  canMove: 0
+  canMove: 1
 --- !u!4 &301529597
 Transform:
   m_ObjectHideFlags: 0

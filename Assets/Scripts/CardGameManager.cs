@@ -48,6 +48,7 @@ public class Card
 public class CardGameManager : MonoBehaviour
 {
 	public List<GameObject> cardPrefabs;
+	public List<GameObject> enemyCards;
 	public List<CardMovement> enemyDeck;
 	public List<CardMovement> playerDeck;
 	public TextMeshProUGUI deckSizeText;
@@ -60,10 +61,15 @@ public class CardGameManager : MonoBehaviour
 
 	public TextMeshProUGUI discardPileSizeText;
 	public bool canMove = true;
+	public int enemPlayCardIndex = 0;
+	public int playerPlayCardIndex = 0;
+	public bool playerEnd = true;
+	public bool gameEnd = false;
 
 	private void Start()
 	{
-		GenerateEnemyDeck();
+		enemyCards = cardPrefabs;
+		playerPlayCardIndex = playerDeck.Count;
 	}
 
 	public void DrawCard()
@@ -84,6 +90,7 @@ public class CardGameManager : MonoBehaviour
 						playerDeck.Remove(randomCard);
 						availableCardSlots[i] = false;
 						canMove = false;
+						Invoke("EnemyPlayCard" , 2f);
 						return;
 					}
 				}
@@ -95,37 +102,77 @@ public class CardGameManager : MonoBehaviour
 	public void GenerateEnemyDeck()
 	{
 		List<GameObject> newDeck = cardPrefabs;
-		for (int i = 0; i< playerDeck.Count; i++)
+		for (int i = 0; i < playerDeck.Count; i++)
 		{
-			var newCard = Instantiate(newDeck[UnityEngine.Random.Range(0, newDeck.Count)], transform);
-			enemyDeck.Add(newCard.GetComponent<CardMovement>());
-			newCard.SetActive(false);
+			var newCard = newDeck[UnityEngine.Random.Range(0, newDeck.Count)];
+			enemyCards.Add(newCard);
 			newDeck.Remove(newCard);
 		}
+/*		GameObject newCard = Instantiate(enemyCards[UnityEngine.Random.Range(0, enemyCards.Count)], cardSlots[playerDiscardPile.Count]);
+		newCard.transform.position += Vector3.up * 5.5f;
+		enemyDeck.Add(newCard.GetComponent<CardMovement>());
+		newCard.SetActive(false);
+		enemyCards.Remove(newCard);*/
+		canMove = true;
 	}
 	public void EnemyPlayCard()
 	{
-
-	}
-	public void PlayerPlayCard(CardMovement card)
-	{
-		if (canMove)
+		if (!gameEnd)
 		{
+			Debug.Log("dfsdf");
+			if (enemyDeck.Count >= 1)
+			{
+				CardMovement randomCard = enemyDeck[UnityEngine.Random.Range(0, enemyDeck.Count)];
+				randomCard.gameObject.SetActive(true);
+				enemyDeck.Remove(randomCard);
+				PlayCard(randomCard, true);
+			}
+			else
+			{
+				GenerateEnemyDeck();
+				GameObject newCard = Instantiate(enemyCards[UnityEngine.Random.Range(0, enemyCards.Count)], cardSlots[enemPlayCardIndex]);
+				newCard.transform.position += Vector3.up * 5.5f;
+				enemyDeck.Add(newCard.GetComponent<CardMovement>());
+				newCard.SetActive(false);
+				enemPlayCardIndex = enemPlayCardIndex + 1;
+			}
+			if (playerPlayCardIndex == playerDiscardPile.Count)
+			{
+				gameEnd = true;
+				StartCoroutine(AutoEndGame());
+			}
+		}
+		
+	}
+	public void PlayCard(CardMovement card, bool isEnemy)
+	{
+		List<CardMovement> newEnemyDiscardPile = null;
+		List<CardMovement> newPlayerDiscardPile = null;
+		if (isEnemy)
+		{
+			newEnemyDiscardPile = playerDiscardPile;
+			newPlayerDiscardPile = enemyDiscardPile;
+		}
+		else
+		{
+			newEnemyDiscardPile = enemyDiscardPile;
+			newPlayerDiscardPile = playerDiscardPile;
+		}
 			Perk cardPerk = card.selfCard.perk;
 			Card playerCard = card.selfCard;
 			List<CardMovement> cards = new List<CardMovement>();	
 			if (cardPerk.forAllCards)
 			{
-				cards.AddRange(enemyDiscardPile);
-				cards.AddRange(playerDiscardPile);
+				cards.AddRange(newEnemyDiscardPile);
+				cards.AddRange(newPlayerDiscardPile);
 			}
 			else if (cardPerk.forEnemyCards)
 			{
-				cards.AddRange(enemyDiscardPile);
+				cards.AddRange(newEnemyDiscardPile);
 			}
 			else if (cardPerk.forAlliesCards)
 			{
-				cards.AddRange(playerDiscardPile);
+				cards.AddRange(newPlayerDiscardPile);
 			}
 			foreach (CardMovement discCardScript in cards)
 			{
@@ -142,21 +189,71 @@ public class CardGameManager : MonoBehaviour
 					}
 				}
 			}
-			foreach (CardMovement enemyCard in enemyDiscardPile)
+			foreach (CardMovement enemyCard in newEnemyDiscardPile)
 			{
 				if ((enemyCard.selfCard.type == "Rook" && playerCard.type == "Paper") || (enemyCard.selfCard.type == "Cutter" && playerCard.type == "Rook") || (enemyCard.selfCard.type == "Paper" && playerCard.type == "Cutter"))
 				{
 					enemyCard.TakeDamage(playerCard.attackPoints);
 				}
 			}
-			playerDiscardPile.Add(card);
-			canMove = false;
+			newPlayerDiscardPile.Add(card);
+
+		if (!gameEnd)
+		{
+			Debug.Log(";pl,pomp");
+			if (isEnemy)
+			{
+				
+				playerDiscardPile = newEnemyDiscardPile;
+				enemyDiscardPile = newPlayerDiscardPile;
+				canMove = true;
+			}
+			else
+			{
+				enemyDiscardPile = newEnemyDiscardPile;
+				playerDiscardPile = newPlayerDiscardPile;
+				canMove = false;
+				Invoke("EnemyPlayCard", 2f);
+			}
 		}
+		
 	}
 
 	private void Update()
 	{
 		deckSizeText.text = playerDeck.Count.ToString();
 	}
+	public IEnumerator AutoEndGame()
+	{
+		int playIndex = 2;
+		int playerCardIndex = 0;
+		int enemyCardIndex = 0;
+		while (enemyDiscardPile.Count != 0 || playerDiscardPile.Count != 0)
+		{
 
+			Debug.Log("sdfssgddfsg");
+			if (playIndex / 2 == 1)
+			{
+				PlayCard(playerDiscardPile[playerCardIndex] , false);
+				playerCardIndex += 1;
+			}
+			else
+			{
+				PlayCard(enemyDiscardPile[enemyCardIndex], true);
+				enemyCardIndex += 1;
+			}
+			if (enemyCardIndex == enemyDiscardPile.Count - 1 )
+			{
+				enemyCardIndex = enemyDiscardPile.Count - 1;
+			}
+			if (playerCardIndex == playerDiscardPile.Count - 1)
+			{
+				playerCardIndex = playerDiscardPile.Count - 1;
+			}
+			playIndex += 1;
+
+			yield return new WaitForSeconds(1f);
+		}
+
+	}
 }

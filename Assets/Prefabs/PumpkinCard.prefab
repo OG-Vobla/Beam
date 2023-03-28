@@ -13,9 +13,17 @@ PrefabInstance:
       value: PumpkinCard
       objectReference: {fileID: 0}
     - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
+      propertyPath: dieEffect
+      value: 
+      objectReference: {fileID: 3757043119740318057, guid: 2d563df92650c4c45bfab8ac41590b76, type: 3}
+    - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
       propertyPath: attackText
       value: 
       objectReference: {fileID: 2813469017847681080}
+    - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
+      propertyPath: healEffect
+      value: 
+      objectReference: {fileID: 3757043119740318057, guid: 160243d9bd9ef1b4ab66567b9ad7c996, type: 3}
     - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
       propertyPath: healthText
       value: 
@@ -24,6 +32,10 @@ PrefabInstance:
       propertyPath: selfCard.type
       value: Paper
       objectReference: {fileID: 0}
+    - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
+      propertyPath: takeDamageEffect
+      value: 
+      objectReference: {fileID: 3757043119740318057, guid: e4855623618ce304abf287c2ddf15b4b, type: 3}
     - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
       propertyPath: selfCard.perk.points
       value: 7
