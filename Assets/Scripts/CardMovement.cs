@@ -15,6 +15,8 @@ public class CardMovement : MonoBehaviour
 
 	private Animator anim;
 
+	public bool isEnemyCard = false;
+
 	public GameObject healEffect;
 	public GameObject takeDamageEffect;
 	public GameObject dieEffect;
@@ -34,6 +36,14 @@ public class CardMovement : MonoBehaviour
 		if (selfCard.healthPoints <= 0)
 		{
 			Instantiate(dieEffect, transform.position, Quaternion.identity);
+			if (isEnemyCard)
+			{
+				gm.enemyDiscardPile.Remove(this);
+			}
+			else
+			{
+				gm.playerDiscardPile.Remove(this);
+			}
 			Destroy(gameObject);
 		}
 	}

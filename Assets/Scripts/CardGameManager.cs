@@ -65,6 +65,8 @@ public class CardGameManager : MonoBehaviour
 	public int playerPlayCardIndex = 0;
 	public bool playerEnd = true;
 	public bool gameEnd = false;
+	public int playerCardIndex = 0;
+	public int enemyCardIndex = 0;
 
 	private void Start()
 	{
@@ -132,6 +134,7 @@ public class CardGameManager : MonoBehaviour
 				GenerateEnemyDeck();
 				GameObject newCard = Instantiate(enemyCards[UnityEngine.Random.Range(0, enemyCards.Count)], cardSlots[enemPlayCardIndex]);
 				newCard.transform.position += Vector3.up * 5.5f;
+				newCard.GetComponent<CardMovement>().isEnemyCard = true;
 				enemyDeck.Add(newCard.GetComponent<CardMovement>());
 				newCard.SetActive(false);
 				enemPlayCardIndex = enemPlayCardIndex + 1;
@@ -146,8 +149,8 @@ public class CardGameManager : MonoBehaviour
 	}
 	public void PlayCard(CardMovement card, bool isEnemy)
 	{
-		List<CardMovement> newEnemyDiscardPile = null;
-		List<CardMovement> newPlayerDiscardPile = null;
+		List<CardMovement> newEnemyDiscardPile = new List<CardMovement>();
+		List<CardMovement> newPlayerDiscardPile = new List<CardMovement>();
 		if (isEnemy)
 		{
 			newEnemyDiscardPile = playerDiscardPile;
@@ -196,10 +199,11 @@ public class CardGameManager : MonoBehaviour
 					enemyCard.TakeDamage(playerCard.attackPoints);
 				}
 			}
-			newPlayerDiscardPile.Add(card);
+
 
 		if (!gameEnd)
 		{
+			newPlayerDiscardPile.Add(card);
 			Debug.Log(";pl,pomp");
 			if (isEnemy)
 			{
@@ -226,29 +230,29 @@ public class CardGameManager : MonoBehaviour
 	public IEnumerator AutoEndGame()
 	{
 		int playIndex = 2;
-		int playerCardIndex = 0;
-		int enemyCardIndex = 0;
+
 		while (enemyDiscardPile.Count != 0 || playerDiscardPile.Count != 0)
 		{
 
-			Debug.Log("sdfssgddfsg");
-			if (playIndex / 2 == 1)
+			if (playIndex % 2 == 1)
 			{
-				PlayCard(playerDiscardPile[playerCardIndex] , false);
+				PlayCard(playerDiscardPile[playerDiscardPile.Count-1 < playerCardIndex ? playerCardIndex = 0: playerCardIndex] , false);
 				playerCardIndex += 1;
 			}
 			else
 			{
-				PlayCard(enemyDiscardPile[enemyCardIndex], true);
+				PlayCard(enemyDiscardPile[enemyDiscardPile.Count - 1 < enemyCardIndex ? enemyCardIndex = 0 : enemyCardIndex], true);	
 				enemyCardIndex += 1;
 			}
-			if (enemyCardIndex == enemyDiscardPile.Count - 1 )
+			if (enemyCardIndex == enemyDiscardPile.Count )
 			{
-				enemyCardIndex = enemyDiscardPile.Count - 1;
+				Debug.Log("sdfssgddfsg");
+				enemyCardIndex = 0;
 			}
-			if (playerCardIndex == playerDiscardPile.Count - 1)
+			if (playerCardIndex == playerDiscardPile.Count)
 			{
-				playerCardIndex = playerDiscardPile.Count - 1;
+				Debug.Log("sdfssgddfsg");
+				playerCardIndex = 0;
 			}
 			playIndex += 1;
 

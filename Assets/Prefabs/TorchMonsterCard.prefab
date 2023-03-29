@@ -29,6 +29,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3880403733838115613}
     - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
+      propertyPath: isEnemyCard
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
       propertyPath: selfCard.type
       value: Cutter
       objectReference: {fileID: 0}
