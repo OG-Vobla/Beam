@@ -10,10 +10,12 @@ public class CardMovement : MonoBehaviour
 	public int handIndex;
 	public TMP_Text attackText;
 	public TMP_Text healthText;
+	public TMP_Text takeDamgeText;
+	public TMP_Text healText;
 
 	CardGameManager gm;
 
-	private Animator anim;
+	public Animator anim;
 
 	public bool isEnemyCard = false;
 
@@ -21,6 +23,8 @@ public class CardMovement : MonoBehaviour
 	public GameObject takeDamageEffect;
 	public GameObject dieEffect;
 	public GameObject hollowCircle;
+
+	public GameObject cloneEffect;
 
 	public Card selfCard;
 
@@ -35,7 +39,7 @@ public class CardMovement : MonoBehaviour
 		healthText.text = selfCard.healthPoints.ToString();
 		if (selfCard.healthPoints <= 0)
 		{
-			Instantiate(dieEffect, transform.position, Quaternion.identity);
+			cloneEffect = Instantiate(dieEffect, transform.position, Quaternion.identity);
 			if (isEnemyCard)
 			{
 				gm.enemyDiscardPile.Remove(this);
@@ -44,29 +48,51 @@ public class CardMovement : MonoBehaviour
 			{
 				gm.playerDiscardPile.Remove(this);
 			}
+			Destroy(cloneEffect, 1f);
 			Destroy(gameObject);
 		}
 	}
-	private void OnMouseDown()
+	public void OnMouseDown()
 	{
 		if (!hasBeenPlayed && gm.canMove)
 		{
-			Instantiate(hollowCircle, transform.position, Quaternion.identity);
+			cloneEffect =Instantiate(hollowCircle, transform.position, Quaternion.identity);
 			anim.SetTrigger("move");
 			transform.position += Vector3.up * 3f;
 			hasBeenPlayed = true;
 			gm.PlayCard(this, false);
+			Destroy(cloneEffect, 1f);
 		}
 	}
 	public void Heal(int points)
 	{
 		selfCard.healthPoints += points;
-		Instantiate(healEffect, transform.position, Quaternion.identity);
+		healText.text = $"+{points}";
+		healText.gameObject.SetActive(true);
+		StartCoroutine(SetActiveText(true));
+		cloneEffect = Instantiate(healEffect, transform.position, Quaternion.identity);
+		Destroy(cloneEffect, 1f);
 	}
 	public void TakeDamage(int points)
 	{
 		selfCard.healthPoints -= points;
-		Instantiate(takeDamageEffect, transform.position, Quaternion.identity);
+		takeDamgeText.text = $"-{points}";
+		takeDamgeText.gameObject.SetActive(true);
+		StartCoroutine(SetActiveText(false));
+		cloneEffect = Instantiate(takeDamageEffect, transform.position, Quaternion.identity);
+		Destroy(cloneEffect, 1f);
+	}
+	public IEnumerator SetActiveText(bool isHeal)
+	{
+		yield return new WaitForSeconds(1);
+		if (isHeal)
+		{
+			healText.gameObject.SetActive(false);
+		}
+		else
+		{
+			takeDamgeText.gameObject.SetActive(false);
+		}
 	}
 	/*
 		void MoveToDiscardPile()

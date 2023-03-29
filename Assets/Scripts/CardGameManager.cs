@@ -52,6 +52,7 @@ public class CardGameManager : MonoBehaviour
 	public List<CardMovement> enemyDeck;
 	public List<CardMovement> playerDeck;
 	public TextMeshProUGUI deckSizeText;
+	public TMP_Text gameInfoText;
 
 	public Transform[] cardSlots;
 	public bool[] availableCardSlots;
@@ -67,9 +68,11 @@ public class CardGameManager : MonoBehaviour
 	public bool gameEnd = false;
 	public int playerCardIndex = 0;
 	public int enemyCardIndex = 0;
+	public GameObject cloneEffect;
 
 	private void Start()
 	{
+		gameInfoText.text = "Ваш ход";
 		enemyCards = cardPrefabs;
 		playerPlayCardIndex = playerDeck.Count;
 	}
@@ -93,11 +96,13 @@ public class CardGameManager : MonoBehaviour
 						availableCardSlots[i] = false;
 						canMove = false;
 						Invoke("EnemyPlayCard" , 2f);
+						gameInfoText.text = "Ход противника";
 						return;
 					}
 				}
 			}
 		}
+
 
 	}
 
@@ -121,7 +126,6 @@ public class CardGameManager : MonoBehaviour
 	{
 		if (!gameEnd)
 		{
-			Debug.Log("dfsdf");
 			if (enemyDeck.Count >= 1)
 			{
 				CardMovement randomCard = enemyDeck[UnityEngine.Random.Range(0, enemyDeck.Count)];
@@ -144,6 +148,7 @@ public class CardGameManager : MonoBehaviour
 				gameEnd = true;
 				StartCoroutine(AutoEndGame());
 			}
+			gameInfoText.text = "Ваш ход";
 		}
 		
 	}
@@ -204,16 +209,18 @@ public class CardGameManager : MonoBehaviour
 		if (!gameEnd)
 		{
 			newPlayerDiscardPile.Add(card);
-			Debug.Log(";pl,pomp");
 			if (isEnemy)
 			{
-				
+
+				gameInfoText.text = "Ваш ход";
 				playerDiscardPile = newEnemyDiscardPile;
 				enemyDiscardPile = newPlayerDiscardPile;
 				canMove = true;
 			}
 			else
 			{
+
+				gameInfoText.text = "Ход противника";
 				enemyDiscardPile = newEnemyDiscardPile;
 				playerDiscardPile = newPlayerDiscardPile;
 				canMove = false;
@@ -236,28 +243,36 @@ public class CardGameManager : MonoBehaviour
 
 			if (playIndex % 2 == 1)
 			{
+				gameInfoText.text = "Ход противника";
 				PlayCard(playerDiscardPile[playerDiscardPile.Count-1 < playerCardIndex ? playerCardIndex = 0: playerCardIndex] , false);
+				playerDiscardPile[playerDiscardPile.Count - 1 < playerCardIndex ? playerCardIndex = 0 : playerCardIndex].anim.SetTrigger("popIn");
+				cloneEffect = Instantiate(playerDiscardPile[playerDiscardPile.Count - 1 < playerCardIndex ? playerCardIndex = 0 : playerCardIndex].hollowCircle, playerDiscardPile[playerDiscardPile.Count - 1 < playerCardIndex ? playerCardIndex = 0 : playerCardIndex].transform.position, Quaternion.identity);
+
 				playerCardIndex += 1;
+				Destroy(cloneEffect, 1f);
 			}
 			else
 			{
-				PlayCard(enemyDiscardPile[enemyDiscardPile.Count - 1 < enemyCardIndex ? enemyCardIndex = 0 : enemyCardIndex], true);	
+				gameInfoText.text = "Ваш ход";
+				PlayCard(enemyDiscardPile[enemyDiscardPile.Count - 1 < enemyCardIndex ? enemyCardIndex = 0 : enemyCardIndex], true);
+				enemyDiscardPile[enemyDiscardPile.Count - 1 < enemyCardIndex ? enemyCardIndex = 0 : enemyCardIndex].anim.SetTrigger("popIn");
+				cloneEffect = Instantiate(enemyDiscardPile[enemyDiscardPile.Count - 1 < enemyCardIndex ? enemyCardIndex = 0 : enemyCardIndex].hollowCircle, enemyDiscardPile[enemyDiscardPile.Count - 1 < enemyCardIndex ? enemyCardIndex = 0 : enemyCardIndex].transform.position, Quaternion.identity);
 				enemyCardIndex += 1;
+				Destroy(cloneEffect, 1f);
 			}
 			if (enemyCardIndex == enemyDiscardPile.Count )
 			{
-				Debug.Log("sdfssgddfsg");
 				enemyCardIndex = 0;
 			}
 			if (playerCardIndex == playerDiscardPile.Count)
 			{
-				Debug.Log("sdfssgddfsg");
 				playerCardIndex = 0;
 			}
 			playIndex += 1;
 
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(2f);
 		}
-
+		gameInfoText.text = "Игра окончена";
 	}
+	
 }

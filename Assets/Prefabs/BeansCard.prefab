@@ -37,6 +37,10 @@ PrefabInstance:
       value: Paper
       objectReference: {fileID: 0}
     - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
+      propertyPath: takeDamgeText
+      value: 
+      objectReference: {fileID: 5207496339581014781}
+    - target: {fileID: 1023904853984257729, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
       propertyPath: takeDamageEffect
       value: 
       objectReference: {fileID: 3757043119740318057, guid: e4855623618ce304abf287c2ddf15b4b, type: 3}
@@ -143,6 +147,17 @@ MonoBehaviour:
 --- !u!114 &3880403733838115613 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2596631189546755264, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
+  m_PrefabInstance: {fileID: 1283773205754370013}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5207496339581014781 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6454888316150531360, guid: ad587e0b70be0bb4880d92617c9575a7, type: 3}
   m_PrefabInstance: {fileID: 1283773205754370013}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
