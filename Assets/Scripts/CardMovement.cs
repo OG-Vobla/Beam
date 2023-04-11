@@ -12,6 +12,9 @@ public class CardMovement : MonoBehaviour
 	public TMP_Text healthText;
 	public TMP_Text takeDamgeText;
 	public TMP_Text healText;
+	public GameObject infoCan;
+	public TMP_Text infoText;
+
 
 	CardGameManager gm;
 
@@ -30,6 +33,12 @@ public class CardMovement : MonoBehaviour
 
 	private void Start()
 	{
+		infoText.text = $"Здоровье: {selfCard.healthPoints}\nУрон: {selfCard.attackPoints}\nТип: {(selfCard.type == "Rook" ? "камень" : (selfCard.type == "Paper" ? "бумага" : "ножницы"))}\nСпособность: {(selfCard.perk.isHeal ? "лечит ": "наносит урон ") + selfCard.perk.points}\nСпособность применяется к {(selfCard.perk.forEnemyCards?"врагам" :"союзникам")}\nСпособность применяется к:\n";
+		foreach (var a in selfCard.perk.typeCards)
+		{
+			infoText.text += $"{(a == "Rook" ? "камень" : (a == "Paper" ? "бумага" : "ножницы"))}";
+		}
+
 		gm = FindObjectOfType<CardGameManager>();
 		anim = GetComponent<Animator>();
 	}
@@ -54,7 +63,7 @@ public class CardMovement : MonoBehaviour
 	}
 	public void OnMouseDown()
 	{
-		if (!hasBeenPlayed && gm.canMove)
+		if (!hasBeenPlayed && gm.canMove && !isEnemyCard)
 		{
 			cloneEffect =Instantiate(hollowCircle, transform.position, Quaternion.identity);
 			anim.SetTrigger("move");
@@ -99,6 +108,12 @@ public class CardMovement : MonoBehaviour
 		{
 			Instantiate(effect, transform.position, Quaternion.identity);
 		}*/
-
-
+	private void OnMouseEnter()
+	{
+		infoCan.SetActive(true);
+	}
+	private void OnMouseExit()
+	{
+		infoCan.SetActive(false);
+	}
 }

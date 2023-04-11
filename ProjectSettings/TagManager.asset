@@ -5,15 +5,19 @@ TagManager:
   serializedVersion: 2
   tags:
   - Npc
+  - Ground
+  - Wall
+  - Trap
+  - Bullet
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Npc
   - Water
   - UI
-  - 
-  - 
+  - Bullet
+  - Ground
   - 
   - 
   - 
