@@ -11,7 +11,6 @@ public class PlayerControl : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-
 		animator = GetComponent<Animator>();
 	}
 
@@ -40,6 +39,7 @@ public class PlayerControl : MonoBehaviour
 			animator.SetBool("isWalk", false);
 
 		}
+
 	}
 	private void Flip()
 	{

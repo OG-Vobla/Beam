@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class PlayerDataScript : MonoBehaviour
 {
-	public static int Money;
-	public static List<GameObject> PlayerDeck;
-	public static List<GameObject> PlayerCollection;
+	public static int Money = 0;
+	public static List<string> PlayerDeck = new List<string>();
+	public static List<string> EnemyDeck = new List<string>();
 	public static int PlatformerLvl;
+	private void Start()
+	{
+		DontDestroyOnLoad(this);
+	}
+
 }
