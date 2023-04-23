@@ -22,8 +22,6 @@ public class CardGameManagerScript : MonoBehaviour
 	void Start()
 	{
 		StartCoroutine(PlayerCanMoveActiavateWithDelay());
-		PlayerDataScript.PlayerDeck = new List<string>() { "Rook", "Paper", "Cutter" };
-        PlayerDataScript.EnemyDeck = new List<string>() { "Rook", "Rook", "Cutter" };
         InstantiateCards();
 
 	}
