@@ -166,6 +166,9 @@ MonoBehaviour:
   - {fileID: 1596427482}
   - {fileID: 1979731354}
   - {fileID: 1083937507}
+  DieEffect: {fileID: 3354969728808071990, guid: 320bbcf63fbd98846ae1acf015e8f8c7, type: 3}
+  WinEffect: {fileID: 3354969728808071990, guid: 011f4408d52c4584d81b102d14a4f9da, type: 3}
+  playerCanMove: 0
 --- !u!4 &80190438
 Transform:
   m_ObjectHideFlags: 0

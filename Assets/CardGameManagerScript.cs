@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class CardGameManagerScript : MonoBehaviour
@@ -11,25 +10,38 @@ public class CardGameManagerScript : MonoBehaviour
     [SerializeField] private Transform PlayerArm;
     [SerializeField] private List<Transform> EnemyCardSlots;
     [SerializeField] private List<Transform> PlayerCardSlots;
+    [SerializeField] private GameObject DieEffect;
+	[SerializeField] private GameObject WinEffect;
+	
 
-    private GameObject enemyCard;
+	private GameObject enemyCard;
     private GameObject playerCard;
-    public static bool playerCanMove;
+    public bool playerCanMove;
     private int strick = 0;
+	private bool move = false;
 	void Start()
-    {
-        PlayerDataScript.PlayerDeck = new List<string>() { "Rook", "Paper", "Cutter" };
+	{
+		StartCoroutine(PlayerCanMoveActiavateWithDelay());
+		PlayerDataScript.PlayerDeck = new List<string>() { "Rook", "Paper", "Cutter" };
         PlayerDataScript.EnemyDeck = new List<string>() { "Rook", "Rook", "Cutter" };
         InstantiateCards();
 
 	}
-    private void InstantiateCards()
+	void Update()
+	{
+		CheckWin();
+
+	}
+	private void InstantiateCards()
     {
 		for (int i = 0; i < 3; i++)
 		{
 			var newEnemyCard = Instantiate(FindCardOfType(PlayerDataScript.EnemyDeck[i], CardsPrefab), EnemyCardSlots[i]);
+			newEnemyCard.GetComponent<CardScript>().isPlayerCard = false;
+			newEnemyCard.transform.Find("TypeImage").gameObject.SetActive(false);
 			EnemyDeck.Add(newEnemyCard);
 			var newPlayerCard = Instantiate(FindCardOfType(PlayerDataScript.PlayerDeck[i], CardsPrefab), PlayerCardSlots[i]);
+			newPlayerCard.GetComponent<CardScript>().isPlayerCard = true;
 
 		}
 	}
@@ -44,12 +56,6 @@ public class CardGameManagerScript : MonoBehaviour
         }
         return null;
     }
-	// Update is called once per frame
-	void Update()
-    {
-		CheckWin();
-
-	}
     private void CheckWin()
     {
 		if (EnemyDeck.Count == 0 && enemyCard == null)
@@ -72,7 +78,6 @@ public class CardGameManagerScript : MonoBehaviour
 	private int CalculateRound(string winCardType, string loseCardType)
     {
         var enemy = enemyCard.GetComponent<CardScript>().cardType;
-
 		if (enemy == winCardType)
         {
             return -1;
@@ -88,6 +93,8 @@ public class CardGameManagerScript : MonoBehaviour
     }
     private void EnemyPlayCard()
     {
+
+		playerCanMove = false;
 		string cardType = "";
 		if (playerCard == null)
 		{
@@ -108,7 +115,7 @@ public class CardGameManagerScript : MonoBehaviour
 					break;
 			}
 		}
-		PlayCard(FindCardOfType(cardType, EnemyDeck),true);
+		StartCoroutine(PlayCard(FindCardOfType(cardType, EnemyDeck),true));
     }
 	private string FindCardOfTypeInEnemyDeck(string winCardType, string drawCardType)
 	{
@@ -127,48 +134,97 @@ public class CardGameManagerScript : MonoBehaviour
 	{
 		return EnemyDeck[Random.Range(0, EnemyDeck.Count)].GetComponent<CardScript>().cardType;
 	}
-	public void PlayCard(GameObject card, bool isEnemy)
+	public IEnumerator PlayCard(GameObject card, bool isEnemy)
 	{
-        if (isEnemy)
-        {
-            var newCard = Instantiate(card, EnemyArm);
-			newCard.transform.localPosition= Vector3.zero;
-			enemyCard = newCard;
+		card.GetComponent<CardScript>().isPlayerCard = false;
+		Animator animator = card.GetComponent<Animator>();
+		if (isEnemy)
+		{
+			animator.SetTrigger("EnemyCardHide");
+			yield return new WaitForSeconds(1f);
+			card.SetActive(false);
+			card.transform.SetParent(EnemyArm);
+			card.transform.Find("TypeImage").gameObject.SetActive(true);
+			card.transform.localPosition= Vector3.zero;
+			enemyCard = card;
 			EnemyDeck.Remove(card);
+			card.SetActive(true);
+			animator.SetTrigger("EnemyCardShow");
 		}
         else
-        {
-			var newCard = Instantiate(card, PlayerArm);
-			newCard.transform.localPosition = Vector3.zero;
-			playerCard = newCard;
+		{
+			playerCanMove = false;
+			animator.SetTrigger("PlayerCardHide");
+			yield return new WaitForSeconds(1f);
+			card.SetActive(false);
+			card.transform.SetParent(PlayerArm);
+			card.transform.localPosition = Vector3.zero;
+			playerCard = card;
 			PlayerDataScript.PlayerDeck.Remove(card.GetComponent<CardScript>().cardType);
+			card.SetActive(true);
+			animator.SetTrigger("PlayerCardShow");
 		}
-		Destroy(card);
+
 		if (playerCard == null)
         {
-			playerCanMove = true;
 		}
         else if (enemyCard == null)
-        {
-            EnemyPlayCard();
+		{
 		}
         else
         {
+			int result = 0;
             switch (playerCard.GetComponent<CardScript>().cardType)
             {
                 case "Rook":
-                    strick =+ CalculateRound("Paper", "Cutter");
+					result = CalculateRound("Paper", "Cutter");
+					strick =+ result;
 					break;
 				case "Cutter":
-					strick = +CalculateRound("Rook", "Paper");
+					result = CalculateRound("Rook", "Paper");
+					strick = +result;
 					break;
 				case "Paper":
-					strick = +CalculateRound("Cutter", "Cutter");
+					result = CalculateRound("Cutter", "Cutter");
+					strick = + result; 
 					break;
 			}
-            Destroy(playerCard, 2f);
+			Debug.Log(result);
+			if (result > 0)
+			{
+				Destroy(Instantiate(DieEffect, EnemyArm.transform), 3f);
+				Destroy(Instantiate(WinEffect, PlayerArm.transform), 3f);
+			}
+			else if (result < 0)
+			{
+				Destroy(Instantiate(DieEffect, PlayerArm.transform), 3f);
+				Destroy(Instantiate(WinEffect, EnemyArm.transform), 3f);
+			}
+			else
+			{
+				Destroy(Instantiate(DieEffect, PlayerArm.transform),3f);
+				Destroy(Instantiate(DieEffect, EnemyArm.transform),3f);
+			}
+			Destroy(playerCard, 2f);
             Destroy(enemyCard, 2f);
+			move = !move;
 		}
-		
+		StartCoroutine(PlayerCanMoveActiavateWithDelay());
+
+	}
+	private IEnumerator PlayerCanMoveActiavateWithDelay()
+	{
+		yield return new WaitForSeconds(2f);
+		if (move && playerCard == null)
+		{
+			move = false;
+			playerCanMove = true;
+		}
+		else if (move == false && enemyCard == null && EnemyDeck.Count != 0)
+		{
+			move = true;
+			EnemyPlayCard();
+		}
+
 	}
 }
