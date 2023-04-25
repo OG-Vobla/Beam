@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class NpcControl : MonoBehaviour
@@ -27,7 +28,7 @@ public class NpcControl : MonoBehaviour
 	
 	public void DialogAgree()
 	{
-		
+		SceneManager.LoadScene("FightScene");
 	}
 
     private IEnumerator DialogHideShow(string str)

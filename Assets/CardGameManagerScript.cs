@@ -183,7 +183,7 @@ public class CardGameManagerScript : MonoBehaviour
 					strick = +result;
 					break;
 				case "Paper":
-					result = CalculateRound("Cutter", "Cutter");
+					result = CalculateRound("Cutter", "Rook");
 					strick = + result; 
 					break;
 			}

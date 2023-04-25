@@ -60,7 +60,7 @@ public class FirstWorldGameManager : MonoBehaviour
 	}
 	public void SellCard(int place)
 	{
-		if (PlayerDataScript.PlayerDeck.Count > 0)
+		if (PlayerDataScript.PlayerDeck.Count > 0 && place < PlayerDataScript.PlayerDeck.Count)
 		{
 			PlayerDataScript.PlayerDeck.Remove(PlayerDataScript.PlayerDeck[place]);
 			PlayerDataScript.Money = PlayerDataScript.Money + cardCost;
