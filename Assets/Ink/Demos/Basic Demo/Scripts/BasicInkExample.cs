@@ -8,12 +8,16 @@ using TMPro;
 
 // This is a super bare bones example of how to play and display a ink story in Unity.
 public class BasicInkExample : MonoBehaviour {
+
 	[SerializeField]
 	private TextAsset inkJSONAsset = null;
 	public Story story;
 
 	[SerializeField]
 	private GameObject canvas = null;
+
+	[SerializeField]
+	private string questName = "";
 
 
 	[SerializeField]
@@ -27,7 +31,6 @@ public class BasicInkExample : MonoBehaviour {
 	void Awake () {
 		isFirstRun = true;
 		RemoveChildren();
-		
 	}
 
 	void StartStory () {
@@ -151,7 +154,7 @@ public class BasicInkExample : MonoBehaviour {
 			{
 				yield return new WaitForSeconds(2f);
 				rnd = UnityEngine.Random.Range(100, 110);
-				text.text = "";
+				text.text = ""; 
 			}
 		}
 		textEnd = true;
