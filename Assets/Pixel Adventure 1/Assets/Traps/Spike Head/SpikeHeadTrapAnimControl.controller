@@ -266,12 +266,6 @@ AnimatorController:
   m_Name: SpikeHeadTrapAnimControl
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Index
-    m_Type: 3
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 0}
   - m_Name: isBlink
     m_Type: 4
     m_DefaultFloat: 0
@@ -435,22 +429,22 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 7394666966644538423}
-    m_Position: {x: 330, y: 240, z: 0}
+    m_Position: {x: 380, y: 270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1635196871216861580}
     m_Position: {x: 311, y: 155, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3309262589757942163}
-    m_Position: {x: 60, y: 240, z: 0}
+    m_Position: {x: 60, y: 200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -65517266936079980}
-    m_Position: {x: 50, y: 390, z: 0}
+    m_Position: {x: 100, y: 390, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4475280651881022866}
-    m_Position: {x: 50, y: 300, z: 0}
+    m_Position: {x: 10, y: 300, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2510836433470810841}
-    m_Position: {x: 300, y: 340, z: 0}
+    m_Position: {x: 450, y: 370, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []

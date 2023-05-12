@@ -32,7 +32,6 @@ public class PlayerPlatformerControlScript : MonoBehaviour
 	{
 		if (rb.velocity.y ==0)
 		{
-			Debug.Log("Презимлился");
 			animator.SetBool("Jump", false);
 			animator.SetBool("DoubleJump", false);
 			extraJumpsValue = 1;
@@ -54,7 +53,6 @@ public class PlayerPlatformerControlScript : MonoBehaviour
 		{
 			animator.SetBool("Jump", true);
 		}
-		Debug.Log(extraJumpsValue);
 		transform.position = new Vector2(transform.position.x + Input.GetAxisRaw("Horizontal") * Time.deltaTime * PlayerSpeed, transform.position.y);
 		if (Input.GetAxisRaw("Horizontal") < 0 )
 		{
@@ -97,6 +95,7 @@ public class PlayerPlatformerControlScript : MonoBehaviour
 	}
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
+		Debug.Log(collision.gameObject.tag);
 		if (collision.gameObject.tag == "Bullet" || collision.gameObject.tag == "Trap" || collision.gameObject.tag == "Npc")
 		{
 			gameManager.PlyerDie();

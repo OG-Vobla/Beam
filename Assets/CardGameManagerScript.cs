@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CardGameManagerScript : MonoBehaviour
 {
@@ -12,23 +15,36 @@ public class CardGameManagerScript : MonoBehaviour
     [SerializeField] private List<Transform> PlayerCardSlots;
     [SerializeField] private GameObject DieEffect;
 	[SerializeField] private GameObject WinEffect;
+	[SerializeField] private TMP_Text GameText;
 	
 
 	private GameObject enemyCard;
     private GameObject playerCard;
     public bool playerCanMove;
     private int strick = 0;
-	private bool move = false;
+	private bool endGame = false;
+
 	void Start()
 	{
-		StartCoroutine(PlayerCanMoveActiavateWithDelay());
+		GameText.text = "Бой начался";
         InstantiateCards();
-
-	}
+        StartCoroutine(PlayerCanMoveActiavateWithDelay());
+    }
 	void Update()
 	{
 		CheckWin();
-
+		if (endGame == false)
+		{
+            if (playerCanMove)
+            {
+                GameText.text = "Сделайте ход!";
+            }
+            else
+            {
+                GameText.text = "Обдумайте ход!";
+            }
+        }
+		
 	}
 	private void InstantiateCards()
     {
@@ -58,18 +74,28 @@ public class CardGameManagerScript : MonoBehaviour
     {
 		if (EnemyDeck.Count == 0 && enemyCard == null)
 		{
-			if (strick > 0)
+            endGame = true;
+            if (strick > 0)
 			{
-				Debug.Log("Win");
+				PlayerDataScript.strick = 2;
+				if (PlayerDataScript.DefeatNpcs.Where(element => element == PlayerDataScript.FightNpcs).Count() == 0 ||  PlayerDataScript.DefeatNpcs.Count == 0)
+				{
+					PlayerDataScript.DefeatNpcs.Add(PlayerDataScript.FightNpcs);
+
+                }
+                GameText.text = "Вы выйграли";
 			}
 			else if (strick < 0)
 			{
-				Debug.Log("Lose");
-			}
+				PlayerDataScript.strick = 1;
+				GameText.text = "Вы проиграли";
+            }
 			else if (strick == 0)
 			{
-				Debug.Log("Draw");
+                PlayerDataScript.strick = 1;
+                GameText.text = "Ничья";
 			}
+			StartCoroutine(LoadSceneWithDelay());
 		}
 	}
 
@@ -89,6 +115,11 @@ public class CardGameManagerScript : MonoBehaviour
             return 0;
         }
     }
+	private IEnumerator LoadSceneWithDelay()
+	{
+		yield return new WaitForSeconds(2);
+		SceneManager.LoadScene("OpenWorld");
+	}
     private void EnemyPlayCard()
     {
 
@@ -134,6 +165,7 @@ public class CardGameManagerScript : MonoBehaviour
 	}
 	public IEnumerator PlayCard(GameObject card, bool isEnemy)
 	{
+
 		card.GetComponent<CardScript>().isPlayerCard = false;
 		Animator animator = card.GetComponent<Animator>();
 		if (isEnemy)
@@ -150,8 +182,9 @@ public class CardGameManagerScript : MonoBehaviour
 			animator.SetTrigger("EnemyCardShow");
 		}
         else
-		{
-			playerCanMove = false;
+        {
+            EnemyPlayCard();
+            playerCanMove = false;
 			animator.SetTrigger("PlayerCardHide");
 			yield return new WaitForSeconds(1f);
 			card.SetActive(false);
@@ -161,9 +194,10 @@ public class CardGameManagerScript : MonoBehaviour
 			PlayerDataScript.PlayerDeck.Remove(card.GetComponent<CardScript>().cardType);
 			card.SetActive(true);
 			animator.SetTrigger("PlayerCardShow");
-		}
-
-		if (playerCard == null)
+			StartCoroutine(PlayerCanMoveActiavateWithDelay());
+        }
+       
+        if (playerCard == null)
         {
 		}
         else if (enemyCard == null)
@@ -176,18 +210,19 @@ public class CardGameManagerScript : MonoBehaviour
             {
                 case "Rook":
 					result = CalculateRound("Paper", "Cutter");
-					strick =+ result;
+					strick = strick + result;
 					break;
 				case "Cutter":
 					result = CalculateRound("Rook", "Paper");
-					strick = +result;
+					strick = strick + result;
 					break;
 				case "Paper":
 					result = CalculateRound("Cutter", "Rook");
-					strick = + result; 
+					strick = strick + result; 
 					break;
 			}
 			Debug.Log(result);
+			Debug.Log(strick);
 			if (result > 0)
 			{
 				Destroy(Instantiate(DieEffect, EnemyArm.transform), 3f);
@@ -205,24 +240,14 @@ public class CardGameManagerScript : MonoBehaviour
 			}
 			Destroy(playerCard, 2f);
             Destroy(enemyCard, 2f);
-			move = !move;
 		}
-		StartCoroutine(PlayerCanMoveActiavateWithDelay());
-
+		
 	}
 	private IEnumerator PlayerCanMoveActiavateWithDelay()
 	{
-		yield return new WaitForSeconds(2f);
-		if (move && playerCard == null)
-		{
-			move = false;
+		yield return new WaitForSeconds(3f);
+			
 			playerCanMove = true;
-		}
-		else if (move == false && enemyCard == null && EnemyDeck.Count != 0)
-		{
-			move = true;
-			EnemyPlayCard();
-		}
 
 	}
 }

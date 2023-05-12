@@ -17,7 +17,7 @@ public class PlantControlScript : BeeControlScript
 			animator.SetTrigger("Attack");
 			var bull = Instantiate(bulletPrefab, transform);
 			bull.SetActive(true);
-			bull.GetComponent<Rigidbody2D>().velocity = new Vector2(turn, 0) * 7;
+			bull.GetComponent<Rigidbody2D>().velocity = new Vector2(turn, 0) * 12;
 			Destroy(bull, 4f);
 			animator.SetTrigger("Attack");
 			StartCoroutine(Pause());

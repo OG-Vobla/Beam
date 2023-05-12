@@ -8,9 +8,6 @@ using UnityEngine.UI;
 public class NpcControl : MonoBehaviour
 {
 	[SerializeField] string[] DeffaultDialogText;
-	[SerializeField] string[] BeforeFightDialogText;
-	[SerializeField] string[] LoseDialogText;
-	[SerializeField] string[] WinDialogText;
 	[SerializeField] string DialogState;
 	private GameObject DialogCanvas;
     // Start is called before the first frame update
@@ -18,17 +15,6 @@ public class NpcControl : MonoBehaviour
     {
 		DialogCanvas = transform.Find("DialogCanvas").gameObject;
 
-	}
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-	
-	public void DialogAgree()
-	{
-		SceneManager.LoadScene("FightScene");
 	}
 
     private IEnumerator DialogHideShow(string str)
@@ -57,11 +43,15 @@ public class NpcControl : MonoBehaviour
 	{
 		foreach (var i in str)
 		{
-			string newStr = i;
-			DialogCanvas.transform.Find("Panel").gameObject.transform.Find("DialogText").gameObject.GetComponent<TMP_Text>().text = "";
+
+            string newStr = i;
+			TMP_Text tM =  DialogCanvas.transform.Find("Panel").gameObject.transform.Find("DialogText").gameObject.GetComponent<TMP_Text>();
+			tM.text = "";
 			while (newStr.Length > 0)
 			{
-				DialogCanvas.transform.Find("Panel").gameObject.transform.Find("DialogText").gameObject.GetComponent<TMP_Text>().text = DialogCanvas.transform.Find("Panel").gameObject.transform.Find("DialogText").gameObject.GetComponent<TMP_Text>().text + newStr[0];
+                GetComponent<AudioSource>().Play();
+
+                tM.text = tM.text + newStr[0];
 				newStr = newStr.Remove(0, 1);
 				yield return new WaitForSeconds(0.1f);
 			}
@@ -69,37 +59,20 @@ public class NpcControl : MonoBehaviour
 		}
 
 	}
-	private void DialogWrite()
-	{
-		if (DialogState == "Deffault")
-		{
-			StartCoroutine(DialogWriteString(DeffaultDialogText));
-		}
-		else if (DialogState == "BeforeFight")
-		{
-			StartCoroutine(DialogWriteString(BeforeFightDialogText));
-		}
-		else if (DialogState == "LoseFight")
-		{
-			StartCoroutine(DialogWriteString(LoseDialogText));
-		}
-		else if (DialogState == "WinFight")
-		{
-			StartCoroutine(DialogWriteString(WinDialogText));
-		}
-	}
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
         if (collision.gameObject.tag == "Player")
         {
+			
             StartCoroutine(DialogHideShow("Show"));
-			DialogWrite();
-		}
+            StartCoroutine(DialogWriteString(DeffaultDialogText));
+        }
 	}
 	private void OnTriggerExit2D(Collider2D collision)
 	{ 
 		if (collision.gameObject.tag == "Player")
 		{
+			StopAllCoroutines();	
 			StartCoroutine(DialogHideShow("Hide"));
 		}
 	}

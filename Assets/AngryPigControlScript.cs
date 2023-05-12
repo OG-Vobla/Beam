@@ -26,7 +26,7 @@ public class AngryPigControlScript : MonoBehaviour
     {
 		bool result = false;
 		RaycastHit2D hit;
-		hit = Physics2D.Raycast(rayPoint.position, rayPoint.TransformDirection(new Vector3(-1, 0, 0)), 10, ~ignoreMask);
+		hit = Physics2D.Raycast(rayPoint.position, rayPoint.TransformDirection(new Vector3(-1, 0, 0)), 16, ~ignoreMask);
 	
 
 		if (hit.collider != null )

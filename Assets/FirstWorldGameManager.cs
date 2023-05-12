@@ -50,7 +50,7 @@ public class FirstWorldGameManager : MonoBehaviour
 	{
 		if (PlayerDataScript.PlayerDeck.Count <3)
 		{
-			if (PlayerDataScript.Money >= PlayerDataScript.Money - cardCost)
+			if (0 <= (PlayerDataScript.Money - cardCost))
 			{
 				PlayerDataScript.PlayerDeck.Add(cardType);
 				PlayerDataScript.Money = PlayerDataScript.Money - cardCost;
@@ -58,6 +58,7 @@ public class FirstWorldGameManager : MonoBehaviour
 			}
 		}
 	}
+
 	public void SellCard(int place)
 	{
 		if (PlayerDataScript.PlayerDeck.Count > 0 && place < PlayerDataScript.PlayerDeck.Count)

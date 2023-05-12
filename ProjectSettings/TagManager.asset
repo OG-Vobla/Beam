@@ -9,6 +9,8 @@ TagManager:
   - Wall
   - Trap
   - Bullet
+  - DontRemove
+  - BgMusic
   layers:
   - Default
   - TransparentFX

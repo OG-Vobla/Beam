@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CoolPlatformerGameManager : MonoBehaviour
 {
@@ -29,11 +30,15 @@ public class CoolPlatformerGameManager : MonoBehaviour
 	}
 	public void PlyerDie()
 	{
-		if (lives > 0)
+		if (lives > 1)
 		{
 			Destroy(LivesTransform.GetChild(0).gameObject);
 			lives -= 1;
 			PlayerSpawn();
+		}
+		else
+		{
+			SceneManager.LoadScene("PlatformerScene");
 		}
 	}
 }
