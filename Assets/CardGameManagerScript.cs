@@ -117,6 +117,7 @@ public class CardGameManagerScript : MonoBehaviour
     }
 	private IEnumerator LoadSceneWithDelay()
 	{
+		PlayerDataScript.isCardGame = true;
 		yield return new WaitForSeconds(2);
 		SceneManager.LoadScene("OpenWorld");
 	}
@@ -246,7 +247,6 @@ public class CardGameManagerScript : MonoBehaviour
 	private IEnumerator PlayerCanMoveActiavateWithDelay()
 	{
 		yield return new WaitForSeconds(3f);
-			
 			playerCanMove = true;
 
 	}

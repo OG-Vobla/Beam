@@ -15,46 +15,71 @@ public class AngryPigControlScript : MonoBehaviour
 	private Vector2 playerPos = Vector2.zero;
 	[SerializeField] private float pauseTime;
 	private bool pause = false;
+	private bool soundPlay = true;
+	private AudioSource audioSource;
+	private GameObject dieSound;
+
 	// Start is called before the first frame update
 	void Start()
 	{
-		animator = GetComponent<Animator>();
+		dieSound = GameObject.FindGameObjectWithTag("DieSound");
+        audioSource = GetComponent<AudioSource>();	
+        if (PlayerDataScript.soundsOn)
+		{
+            audioSource.Play();
+        }
+        animator = GetComponent<Animator>();
 		rayPoint = transform.Find("rayPoint");
+	}
+
+	private void playSound()
+	{
+		if (soundPlay && PlayerDataScript.soundsOn == false)
+		{
+			audioSource.Stop();
+			soundPlay = false;
+        }
+		else if (soundPlay == false && PlayerDataScript.soundsOn)
+        {
+            audioSource.Play();
+            soundPlay = true;
+        }
 	}
 
     private bool Scan()
     {
-		bool result = false;
-		RaycastHit2D hit;
-		hit = Physics2D.Raycast(rayPoint.position, rayPoint.TransformDirection(new Vector3(-1, 0, 0)), 16, ~ignoreMask);
-	
+        bool result = false;
+        RaycastHit2D hit;
+        hit = Physics2D.Raycast(rayPoint.position, rayPoint.TransformDirection(new Vector3(-1, 0, 0)), 16, ~ignoreMask);
 
-		if (hit.collider != null )
-		{
-			if (hit.collider.tag == "Player")
-			{
-				result = true;
-				Debug.DrawLine(rayPoint.position, hit.point, Color.green);
-				playerPos = hit.collider.transform.position;
-			}
-			else
-			{
-				Debug.DrawLine(rayPoint.position, hit.point, Color.blue);
-				result = false;
-			}
 
-		}
-		else
-		{
-			Debug.DrawRay(rayPoint.position, hit.point, Color.red);
-			result = false;
-		}
-		return result;
-	}
-	// Update is called once per frame
-	void Update()
+        if (hit.collider != null)
+        {
+            if (hit.collider.tag == "Player")
+            {
+                result = true;
+                Debug.DrawLine(rayPoint.position, hit.point, Color.green);
+                playerPos = hit.collider.transform.position;
+            }
+            else
+            {
+                Debug.DrawLine(rayPoint.position, hit.point, Color.blue);
+                result = false;
+            }
+
+        }
+        else
+        {
+            Debug.DrawRay(rayPoint.position, hit.point, Color.red);
+            result = false;
+        }
+        return result;
+    }
+    // Update is called once per frame
+    void Update()
     {
-		if (Scan())
+		playSound();
+        if (Scan())
 		{
 			animator.SetBool("Run", true);
 			animator.SetBool("Stop", false);
@@ -97,6 +122,10 @@ public class AngryPigControlScript : MonoBehaviour
 	{
 		if (collision.tag == "Player")
 		{
+			if (PlayerDataScript.soundsOn)
+            {
+                dieSound.GetComponent<AudioSource>().Play();
+            }
 			collision.GetComponent<Rigidbody2D>().velocity = Vector2.up * 10;
 			pause = true;
 			animator.SetTrigger("Hit");

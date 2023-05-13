@@ -22,6 +22,8 @@ public class BasicInkExample : MonoBehaviour {
 	[SerializeField]
 	private GameObject canvas = null;
 
+	private AudioSource typeAudio;
+
 	[SerializeField] public string NpcName;
 
 	[SerializeField]
@@ -36,8 +38,9 @@ public class BasicInkExample : MonoBehaviour {
 	private bool isGive;
 
 	void Awake () {
+        typeAudio = gameObject.GetComponent<AudioSource>();
 
-		RemoveChildren();
+        RemoveChildren();
 	}
 	public void LoadStory()
     {
@@ -230,7 +233,10 @@ public class BasicInkExample : MonoBehaviour {
             text.text = "";
             for (int i = 0; i < newtext.Length; i++)
             {
-			GetComponent<AudioSource>().Play();
+			if (PlayerDataScript.soundsOn)
+            {
+                typeAudio.Play();
+            }
                 text.text += newtext[i];
                 yield return new WaitForSeconds(0.1f);
                 if (i == rnd)

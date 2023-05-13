@@ -10,12 +10,15 @@ public class NpcControl : MonoBehaviour
 	[SerializeField] string[] DeffaultDialogText;
 	[SerializeField] string DialogState;
 	private GameObject DialogCanvas;
+    private AudioSource typeAudio;
+
     // Start is called before the first frame update
     void Start()
     {
 		DialogCanvas = transform.Find("DialogCanvas").gameObject;
+        typeAudio = gameObject.GetComponent<AudioSource>();
 
-	}
+    }
 
     private IEnumerator DialogHideShow(string str)
     {
@@ -48,8 +51,11 @@ public class NpcControl : MonoBehaviour
 			TMP_Text tM =  DialogCanvas.transform.Find("Panel").gameObject.transform.Find("DialogText").gameObject.GetComponent<TMP_Text>();
 			tM.text = "";
 			while (newStr.Length > 0)
-			{
-                GetComponent<AudioSource>().Play();
+            {
+                if (PlayerDataScript.soundsOn)
+                {
+                    typeAudio.Play();
+                }
 
                 tM.text = tM.text + newStr[0];
 				newStr = newStr.Remove(0, 1);

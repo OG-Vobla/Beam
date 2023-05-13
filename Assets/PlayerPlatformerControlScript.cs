@@ -15,10 +15,12 @@ public class PlayerPlatformerControlScript : MonoBehaviour
 	private bool PlayerRight = true;
 	private Animator animator;
 	private CoolPlatformerGameManager gameManager;
-	// Start is called before the first frame update
-	void Start()
-	{
-		gameManager = FindObjectOfType<CoolPlatformerGameManager>();
+    private GameObject dieSound;
+    // Start is called before the first frame update
+    void Start()
+    {
+        dieSound = GameObject.FindGameObjectWithTag("DieSound");
+        gameManager = FindObjectOfType<CoolPlatformerGameManager>();
 		extraJumpsValue = 1;
 		animator = GetComponent<Animator>();
 		rb = GetComponent<Rigidbody2D>();
@@ -95,10 +97,13 @@ public class PlayerPlatformerControlScript : MonoBehaviour
 	}
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-		Debug.Log(collision.gameObject.tag);
 		if (collision.gameObject.tag == "Bullet" || collision.gameObject.tag == "Trap" || collision.gameObject.tag == "Npc")
-		{
-			gameManager.PlyerDie();
+        {
+            if (PlayerDataScript.soundsOn)
+            {
+                dieSound.GetComponent<AudioSource>().Play();
+            }
+            gameManager.PlyerDie();
 		}
 	}
 }

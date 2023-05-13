@@ -11,7 +11,7 @@ public class CoolPlatformerGameManager : MonoBehaviour
 	[SerializeField] GameObject Player;
 	[SerializeField] GameObject LivePrefab;
 	[SerializeField] Transform LivesTransform;
-	static public int index = 0;
+	public int index = 0;
 	private void Start()
 	{
 		PlayerSpawn();
@@ -37,8 +37,8 @@ public class CoolPlatformerGameManager : MonoBehaviour
 			PlayerSpawn();
 		}
 		else
-		{
-			SceneManager.LoadScene("PlatformerScene");
+        {
+            SceneManager.LoadScene("PlatformerScene");
 		}
 	}
 }

@@ -12,10 +12,12 @@ public class RockHeadTrapScript : MonoBehaviour
 	public bool isVertical = false;
 	[SerializeField] private float spead;
 	[SerializeField] private float pauseTime;
+    private AudioSource audioSource;
 
-	private void Start()
-	{
-		animator = GetComponent<Animator>();
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        animator = GetComponent<Animator>();
 	}
 	// Update is called once per frame
 	void Update()
@@ -28,8 +30,12 @@ public class RockHeadTrapScript : MonoBehaviour
 				animator.SetBool("isBlink", true);
 			}
 			if (transform.position.x == points[index].position.x && transform.position.y == points[index].position.y)
-			{
-				if (points.Count == 2)
+            {
+                if (PlayerDataScript.soundsOn)
+                {
+                    audioSource.Play();
+                }
+                if (points.Count == 2)
 				{
 					if (index == 0)
 					{

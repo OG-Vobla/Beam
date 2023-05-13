@@ -9,7 +9,6 @@ public class CupScript : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-
             SceneManager.LoadScene("EndScene");
         }
     }

@@ -9,7 +9,7 @@ public class CheckpointScript : MonoBehaviour
 	{
 		if (!isActive)
 		{
-			CoolPlatformerGameManager.index += 1;
+		 	GameObject.FindGameObjectWithTag("GameManager").GetComponent<CoolPlatformerGameManager>().index += 1;
 			GetComponent<Animator>().SetBool("Enter", true);
 			isActive = true;
 		}

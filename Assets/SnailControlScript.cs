@@ -15,10 +15,14 @@ public class SnailControlScript : MonoBehaviour
 	private Rigidbody2D rb;
 	private bool pause = false;
 	private bool isSnail = true;
-	// Start is called before the first frame update
-	void Start()
-	{
-		isSnail = true;
+    private AudioSource audioSource;
+    private GameObject dieSound;
+    // Start is called before the first frame update
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        dieSound = GameObject.FindGameObjectWithTag("DieSound");
+        isSnail = true;
 		animator = GetComponent<Animator>();
 		rb = GetComponent<Rigidbody2D>();
 	}
@@ -66,8 +70,12 @@ public class SnailControlScript : MonoBehaviour
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.tag == "Player")
-		{
-			collision.GetComponent<Rigidbody2D>().velocity = Vector2.up * 10;
+        {
+            if (PlayerDataScript.soundsOn)
+            {
+                dieSound.GetComponent<AudioSource>().Play();
+            }
+            collision.GetComponent<Rigidbody2D>().velocity = Vector2.up * 10;
 			animator.SetTrigger("Hit");
 			if (isSnail)
 			{
@@ -90,10 +98,14 @@ public class SnailControlScript : MonoBehaviour
 	}
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (collision.gameObject.tag != "Player" && collision.gameObject.tag != "Ground")
+		if (collision.gameObject.tag != "Player" )
 		{
 
-			animator.SetTrigger("WallHit");
+            if (PlayerDataScript.soundsOn)
+            {
+                audioSource.Play();
+            }
+            animator.SetTrigger("WallHit");
 			animator.SetTrigger("WallHit");
 		}
 	}

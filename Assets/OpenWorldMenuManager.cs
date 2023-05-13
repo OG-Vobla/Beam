@@ -9,19 +9,83 @@ public class OpenWorldMenuManager : MonoBehaviour
     [SerializeField] private List<BasicInkExample> Npcs;
     [SerializeField] private Transform Player;  
     [SerializeField] private GameObject Menu;
-    
+    [SerializeField] private GameObject MainButtons;
+    [SerializeField] private GameObject SettingsButtons;
+    [SerializeField] private GameObject MusicBtnRender;
+    [SerializeField] private GameObject SoundBtnRender;
+    [SerializeField] private Sprite OnMusImage;
+    private bool settingsIsOpen;
+    [SerializeField] private Sprite OffMusImage;
     private void Awake()
     {
         if (PlayerPrefs.GetInt("playerIsSaveGame") == 1)
         {
             Load();
         }
+        CheckMusicSound();
     }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ExitMenu();
+        }
+    }
+    public void OnOffMusicSound(bool isMusic)
+    {
+        if (isMusic)
+        {
+            PlayerDataScript.musicOn = !PlayerDataScript.musicOn;
+        }
+        else
+        {
+            PlayerDataScript.soundsOn = !PlayerDataScript.soundsOn;
+        }
+        var BgMusInOpenWorld = GameObject.FindGameObjectWithTag("BgMusicOpenWorld");
+        if (BgMusInOpenWorld != null)
+        {
+            BgMusInOpenWorld.GetComponent<AudioSource>().enabled = PlayerDataScript.musicOn;
+        }
+
+        var BgMusicPlatformer = GameObject.FindGameObjectWithTag("BgMusicPlatformer");
+        if (BgMusicPlatformer != null)
+        {
+            BgMusicPlatformer.GetComponent<AudioSource>().enabled = PlayerDataScript.musicOn;
+        }
+
+        CheckMusicSound();
+    }
+    public void OpenCloseSettings()
+    {
+        if (settingsIsOpen)
+        {
+            SettingsButtons.SetActive(false);
+            MainButtons.SetActive(true);
+        }
+        else
+        {
+            MainButtons.SetActive(false);
+            SettingsButtons.SetActive(true);
+        }
+        settingsIsOpen = !settingsIsOpen;
+    }
+    private void CheckMusicSound()
+    {
+        if (PlayerDataScript.musicOn)
+        {
+            MusicBtnRender.GetComponent<UnityEngine.UI.Image>().sprite = OnMusImage;
+        }
+        else
+        {
+            MusicBtnRender.GetComponent<UnityEngine.UI.Image>().sprite = OffMusImage;
+        }
+        if (PlayerDataScript.soundsOn)
+        {
+            SoundBtnRender.GetComponent<UnityEngine.UI.Image>().sprite = OnMusImage;
+        }
+        else
+        {
+            SoundBtnRender.GetComponent<UnityEngine.UI.Image>().sprite = OffMusImage;
         }
     }
     public void ExitMenu()
@@ -70,21 +134,30 @@ public class OpenWorldMenuManager : MonoBehaviour
     {
         Player.position = new Vector2(PlayerPrefs.GetFloat("playerX"), Player.position.y);
         PlayerDataScript.Money = PlayerPrefs.GetInt("playerMoney");
-        for (int i = 0; i < 3; i++)
+        if (PlayerDataScript.isCardGame == false)
         {
-            if (PlayerPrefs.HasKey(i+"Card"))
+            for (int i = 0; i < 3; i++)
             {
-                PlayerDataScript.PlayerDeck.Add(PlayerPrefs.GetString(i + "Card"));
+                if (PlayerPrefs.HasKey(i + "Card"))
+                {
+                    PlayerDataScript.PlayerDeck.Add(PlayerPrefs.GetString(i + "Card"));
+                }
             }
-        }     
-        for (int i = 0; i < 3; i++)
-        {
-            if (PlayerPrefs.HasKey(i+"Npc"))
+
+            for (int i = 0; i < 3; i++)
             {
-                PlayerDataScript.DefeatNpcs.Add(PlayerPrefs.GetString(i + "Npc"));
+                if (PlayerPrefs.HasKey(i + "Npc"))
+                {
+                    PlayerDataScript.DefeatNpcs.Add(PlayerPrefs.GetString(i + "Npc"));
+                }
             }
         }
+        else
+        {
+            PlayerDataScript.PlayerDeck = new List<string> { };
+            PlayerDataScript.isCardGame = false;
 
+        }
 
 
     }

@@ -11,6 +11,11 @@ TagManager:
   - Bullet
   - DontRemove
   - BgMusic
+  - BgMusicOpenWorld
+  - BgMusicPlatformer
+  - DieSound
+  - MenuManager
+  - GameManager
   layers:
   - Default
   - TransparentFX

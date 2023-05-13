@@ -8,9 +8,13 @@ public class BeeControlScript : MonoBehaviour
 	protected bool pause = false;
 	[SerializeField] protected float pauseTime;
 	protected GameObject bulletPrefab;
-	// Start is called before the first frame update
-	protected void Start()
-	{
+    private GameObject dieSound;
+    private AudioSource audioSource;
+    // Start is called before the first frame update
+    protected void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        dieSound = GameObject.FindGameObjectWithTag("DieSound");
 		animator = GetComponent<Animator>();
 		bulletPrefab = transform.Find("Bullet").gameObject;
 	}
@@ -19,8 +23,12 @@ public class BeeControlScript : MonoBehaviour
     void Update()
     {
 		if (!pause)
-		{
-			animator.SetTrigger("Attack");
+        {
+            if (PlayerDataScript.soundsOn)
+            {
+                audioSource.Play();
+            }
+            animator.SetTrigger("Attack");
 			var bull = Instantiate(bulletPrefab,transform);
 			bull.SetActive(true);
 			bull.GetComponent<Rigidbody2D>().gravityScale = 2;
@@ -39,8 +47,12 @@ public class BeeControlScript : MonoBehaviour
 	protected void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.tag == "Player")
-		{
-			collision.GetComponent<Rigidbody2D>().velocity = Vector2.up * 10;
+        {
+            if (PlayerDataScript.soundsOn)
+            {
+                dieSound.GetComponent<AudioSource>().Play();
+            }
+            collision.GetComponent<Rigidbody2D>().velocity = Vector2.up * 10;
 			pause = true;
 			animator.SetTrigger("Hit");
 			GetComponent<Rigidbody2D>().velocity = Vector2.up * 12;
